@@ -120,11 +120,16 @@ def run_study(optimizer, test_problem, n_calls, n_suggestions, n_obj=1, callback
     eval_time = np.zeros((n_calls, n_suggestions))
     function_evals = np.zeros((n_calls, n_suggestions, n_obj))
     suggest_log = [None] * n_calls
+
     for ii in range(n_calls):
         tt = time()
         try:
             next_points = optimizer.suggest(n_suggestions)
         except Exception as e:
+            import os
+            disable_fallback = os.getenv("BBO_DISABLE_FALLBACK")
+            if disable_fallback:
+                raise ValueError from e
             logger.warning("Failure in optimizer suggest. Falling back to random search.")
             logger.exception(e, exc_info=True)
             print(json.dumps({"optimizer_suggest_exception": {ITER: ii}}))
