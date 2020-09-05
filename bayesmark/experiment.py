@@ -127,8 +127,8 @@ def run_study(optimizer, test_problem, n_calls, n_suggestions, n_obj=1, callback
             next_points = optimizer.suggest(n_suggestions)
         except Exception as e:
             import os
-            disable_fallback = os.getenv("BBO_DISABLE_FALLBACK")
-            if disable_fallback:
+            enable_fallback = os.getenv("BBO_ENABLE_FALLBACK")
+            if not enable_fallback:
                 raise ValueError from e
             logger.warning("Failure in optimizer suggest. Falling back to random search.")
             logger.exception(e, exc_info=True)
